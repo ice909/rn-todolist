@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 export function HapticTab(props: BottomTabBarButtonProps) {
   return (
     <PlatformPressable
+      pressColor="rgba(71, 114, 250, 0.2)"
       {...props}
       onPressIn={(ev) => {
         if (process.env.EXPO_OS === 'ios') {
