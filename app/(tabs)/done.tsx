@@ -1,10 +1,10 @@
-import { DraggableList } from '@/components/draggable-list';
+// import { DraggableList } from '@/components/draggable-list';
 import { Page } from '@/components/page';
 
 export default function DoneScreen() {
   return (
     <Page>
-      <DraggableList />
+      {/* <DraggableList /> */}
     </Page>
   );
 }
