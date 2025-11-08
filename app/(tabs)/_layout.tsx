@@ -33,7 +33,7 @@ export default function TabLayout() {
             </Text>
           ) : null,
         tabBarStyle: {
-          height: 80,
+          height: insets.bottom + 60,
           paddingBottom: 8,
           paddingTop: 6,
           backgroundColor: Colors[colorScheme ?? 'light'].background,
