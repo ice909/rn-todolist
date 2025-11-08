@@ -1,9 +1,10 @@
-import { Text, View } from 'react-native';
+import { DraggableList } from '@/components/draggable-list';
+import { Page } from '@/components/page';
 
 export default function DoneScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ color: '#000' }}>Done</Text>
-    </View>
+    <Page>
+      <DraggableList />
+    </Page>
   );
 }
