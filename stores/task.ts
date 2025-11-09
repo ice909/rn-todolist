@@ -1,13 +1,13 @@
 import { AddMissionParams } from "@/types";
 import { create } from "zustand";
-import { useRenderStore } from "./render";
+import { useDataStore } from "./data";
 
 export const useTaskStore = create<{
   addMission: (params: AddMissionParams) => Promise<void>
 }>(() => ({
   addMission: async (params: AddMissionParams) => {
-    const rs = useRenderStore.getState();
+    const rs = useDataStore.getState();
     rs.addOrder(params.order);
-    rs.addMission(params.mission);
+    rs.updateMission(params.mission);
   }
 }));

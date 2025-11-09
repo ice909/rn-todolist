@@ -8,8 +8,8 @@ import { v4 } from 'uuid';
 
 export default function HomeScreen() {
   const ct = useCreateTask();
-  const orders = useRenderStore((state) => state.orders);
-  const setOrders = useRenderStore((state) => state.setOrder);
+  const orders = useRenderStore((state) => state.todoOrders);
+  const setOrders = useRenderStore((state) => state.setOrders);
 
   function handlePress() {
     ct.createTask({

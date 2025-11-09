@@ -24,11 +24,20 @@ export enum MissionType {
 }
 
 export interface RenderStoreState {
-  orders: Order[]; // 任务数组的类型
+  todoOrders: Order[];
+  doneOrders: Order[];
+  setOrders: (orders: Order[]) => void;
+  _unsubscribe: null | VoidFunction,
+  updateDerived: () => void;
+  init: () => void;
+}
+
+export interface DataStoreState {
+  orders: Order[];
   missionMap: Map<string, Mission>;
   setOrder: (order: Order[]) => void;
   addOrder: (order: Order) => void;
-  addMission: (mission: Mission) => void;
+  updateMission: (mission: Mission) => void;
 }
 
 export interface AddMissionParams {

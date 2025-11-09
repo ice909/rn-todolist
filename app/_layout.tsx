@@ -1,3 +1,4 @@
+import { useRenderStore } from '@/stores/render';
 import {
   DarkTheme,
   DefaultTheme,
@@ -5,12 +6,17 @@ import {
 } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    useRenderStore.getState().init();
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

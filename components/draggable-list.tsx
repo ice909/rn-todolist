@@ -1,4 +1,4 @@
-import { useRenderStore } from '@/stores/render';
+import { useDataStore } from '@/stores/data';
 import { Order } from '@/types';
 import { View, Text, StyleSheet } from 'react-native';
 import DraggableFlatList, {
@@ -6,7 +6,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 
 export function DraggableList({ data, onDragEnd }: { data: Order[], onDragEnd: (data: Order[]) => void }) {
-  const missionMap = useRenderStore((state) => state.missionMap);
+  const missionMap = useDataStore((state) => state.missionMap);
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Order>) => {
     return (
