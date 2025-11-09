@@ -1,20 +1,22 @@
 import { FloatingAddButton } from '@/components/button/FloatingAddButton';
+import { AddOrder } from '@/components/dialog/add-order';
 import { DraggableList } from '@/components/draggable-list';
 import { Page } from '@/components/page';
 import { useCreateTask } from '@/hooks/use-create-task';
 import { useRenderStore } from '@/stores/render';
 import { MissionType } from '@/types';
-import { v4 } from 'uuid';
+import { useState } from 'react';
 
 export default function HomeScreen() {
   const ct = useCreateTask();
   const orders = useRenderStore((state) => state.todoOrders);
   const setOrders = useRenderStore((state) => state.setOrders);
+  const [visible, setVisible] = useState(false);
 
-  function handlePress() {
+  function handleCreate(title: string, desc: string) {
     ct.createTask({
-      missionTitle: v4(),
-      missionContent: '',
+      missionTitle: title,
+      missionContent: desc,
       missionStartTime: '',
       missionPriorityId: 4,
 
@@ -28,7 +30,14 @@ export default function HomeScreen() {
   return (
     <Page>
       <DraggableList data={orders} onDragEnd={setOrders} />
-      <FloatingAddButton onPress={handlePress} />
+      <FloatingAddButton onPress={() => setVisible(true)} />
+      <AddOrder
+        visible={visible}
+        onClose={() => {
+          setVisible(false);
+        }}
+        onConfirm={handleCreate}
+      />
     </Page>
   );
 }
