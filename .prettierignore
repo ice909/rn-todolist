@@ -1,0 +1,5 @@
+node_modules/
+.expo/
+package.json
+pnpm_lock.json
+README.md
