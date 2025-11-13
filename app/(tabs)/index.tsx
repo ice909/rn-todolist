@@ -3,6 +3,7 @@ import { AddOrder } from '@/components/dialog/add-order';
 import { DraggableList } from '@/components/draggable-list';
 import { Page } from '@/components/page';
 import { useCreateTask } from '@/hooks/use-create-task';
+import { useDataStore } from '@/stores/data';
 import { useRenderStore } from '@/stores/render';
 import { MissionType } from '@/types';
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { useState } from 'react';
 export default function HomeScreen() {
   const ct = useCreateTask();
   const orders = useRenderStore((state) => state.todoOrders);
-  const setOrders = useRenderStore((state) => state.setOrders);
+  const setOrders = useDataStore((state) => state.setOrders);
   const [visible, setVisible] = useState(false);
 
   function handleCreate(title: string, desc: string) {

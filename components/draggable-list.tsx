@@ -1,26 +1,18 @@
-import { useDataStore } from '@/stores/data';
 import { Order } from '@/types';
-import { View, Text, StyleSheet } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
+import { MissionItem } from './MissionItem';
 
-export function DraggableList({ data, onDragEnd }: { data: Order[], onDragEnd: (data: Order[]) => void }) {
-  const missionMap = useDataStore((state) => state.missionMap);
-
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<Order>) => {
-    return (
-      <View
-        style={[styles.item, { backgroundColor: isActive ? '#ddd' : '#fff' }]}
-      >
-        <Text
-          style={styles.text}
-          onLongPress={drag} // 长按拖拽
-        >
-          {missionMap.get(item.id)?.missionTitle}
-        </Text>
-      </View>
-    );
+export function DraggableList({
+  data,
+  onDragEnd,
+}: {
+  data: Order[];
+  onDragEnd: (data: Order[]) => void;
+}) {
+  const renderItem = ({ item, drag, isActive, getIndex }: RenderItemParams<Order>) => {
+    return <MissionItem item={item} drag={drag} isActive={isActive} getIndex={getIndex} />;
   };
   return (
     <DraggableFlatList
@@ -31,18 +23,3 @@ export function DraggableList({ data, onDragEnd }: { data: Order[], onDragEnd: (
     ></DraggableFlatList>
   );
 }
-
-const styles = StyleSheet.create({
-  item: {
-    width: 'auto',
-    padding: 16,
-    marginVertical: 4,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  text: {
-    fontSize: 16,
-  },
-});

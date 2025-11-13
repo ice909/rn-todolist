@@ -23,7 +23,7 @@ export const useDataStore = create(
       (set) => ({
         orders: [],
         missionMap: new Map<string, Mission>(),
-        setOrder: (order: Order[]) => {
+        setOrders: (order: Order[]) => {
           set({
             orders: OrderManager.orderToList(order).orders,
           });

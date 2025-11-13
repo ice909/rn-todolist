@@ -14,14 +14,6 @@ export const useRenderStore = create<RenderStoreState>((set, get) => ({
       doneOrders: orders.filter((m) => m.itemType === MissionType.DONE),
     });
   },
-  
-  // TODO: 临时测试使用，后续移除
-  setOrders(orders: Order[]) {
-    set({
-      todoOrders: orders.filter((m) => m.itemType === MissionType.NOT_DONE),
-      doneOrders: orders.filter((m) => m.itemType === MissionType.DONE),
-    })
-  },
 
   _unsubscribe: null,
 

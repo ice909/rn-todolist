@@ -26,7 +26,6 @@ export enum MissionType {
 export interface RenderStoreState {
   todoOrders: Order[];
   doneOrders: Order[];
-  setOrders: (orders: Order[]) => void;
   _unsubscribe: null | VoidFunction,
   updateDerived: () => void;
   init: () => void;
@@ -35,7 +34,7 @@ export interface RenderStoreState {
 export interface DataStoreState {
   orders: Order[];
   missionMap: Map<string, Mission>;
-  setOrder: (order: Order[]) => void;
+  setOrders: (order: Order[]) => void;
   addOrder: (order: Order) => void;
   updateMission: (mission: Mission) => void;
 }
