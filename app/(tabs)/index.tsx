@@ -1,6 +1,7 @@
 import { FloatingAddButton } from '@/components/button/FloatingAddButton';
 import { AddOrder } from '@/components/dialog/add-order';
 import { DraggableList } from '@/components/draggable-list';
+import { EmptyState } from '@/components/empty/EmptyState';
 import { Page } from '@/components/page';
 import { useCreateTask } from '@/hooks/use-create-task';
 import { useDataStore } from '@/stores/data';
@@ -28,9 +29,19 @@ export default function HomeScreen() {
       onCreateSuccess: () => {},
     });
   }
+
+  function renderList() {
+    if (orders.length === 0) {
+      return <EmptyState />;
+    }
+    return (
+      <DraggableList data={orders} onDragEnd={(data) => setOrders(data)} />
+    );
+  }
+
   return (
     <Page>
-      <DraggableList data={orders} onDragEnd={setOrders} />
+      {renderList()}
       <FloatingAddButton onPress={() => setVisible(true)} />
       <AddOrder
         visible={visible}
