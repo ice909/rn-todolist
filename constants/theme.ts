@@ -11,12 +11,14 @@ export const Colors = {
     text: '#11181C',
     background: '#F3F4F9',
     icon: '#687076',
+    checkbox: '#B5B5B5'
   },
   dark: {
     primary: '#4772fa',
     text: '#ECEDEE',
     background: '#010101',
     icon: '#9BA1A6',
+    checkbox: '#B5B5B5'
   },
 };
 

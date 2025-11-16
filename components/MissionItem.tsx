@@ -1,9 +1,9 @@
 import { useDataStore } from '@/stores/data';
 import { useRenderStore } from '@/stores/render';
-import { Order } from '@/types';
-// import { CheckBox } from '@rneui/themed';
+import { MissionType, Order } from '@/types';
 import { StyleSheet, View, Text } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
+import { CustomCheckbox } from './checkbox/CheckBox';
 
 export function MissionItem({
   item,
@@ -12,6 +12,7 @@ export function MissionItem({
   getIndex,
 }: RenderItemParams<Order>) {
   const missionMap = useDataStore((state) => state.missionMap);
+  const updateOrderType = useDataStore((state) => state.updateOrderType);
   const todoOrders = useRenderStore((state) => state.todoOrders);
   return (
     <View
@@ -26,19 +27,16 @@ export function MissionItem({
         },
       ]}
     >
-      {/* <CheckBox
-        containerStyle={{
-          margin: 0,
-          padding: 0,
-        }}
-				wrapperStyle={{ margin: 0, padding: 0 }}
-				style={{ margin: 0, padding: 0 }}
-				size={20}
+      <CustomCheckbox
         checked={item.itemType === MissionType.DONE}
-        iconType="material-community"
-        uncheckedIcon={'checkbox-blank-outline'}
-        checkedIcon={'checkbox-marked'}
-      /> */}
+        onChange={(checked) => {
+          console.log('checked', checked);
+          updateOrderType(
+            item.id,
+            checked ? MissionType.DONE : MissionType.NOT_DONE
+          );
+        }}
+      />
       <Text style={styles.text} onLongPress={drag}>
         {missionMap.get(item.id)?.missionTitle}
       </Text>
@@ -51,10 +49,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: 'auto',
-    paddingHorizontal: 14,
+    paddingHorizontal: 12 ,
     paddingVertical: 10,
     marginHorizontal: 12,
-		gap: 0,
+    gap: 6,
   },
   text: {
     fontSize: 16,

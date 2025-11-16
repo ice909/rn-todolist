@@ -33,10 +33,12 @@ export interface RenderStoreState {
 
 export interface DataStoreState {
   orders: Order[];
+  orderMap: Map<string, Order>;
   missionMap: Map<string, Mission>;
   setOrders: (order: Order[]) => void;
   addOrder: (order: Order) => void;
   updateMission: (mission: Mission) => void;
+  updateOrderType: (orderId: string, itemType: MissionType) => void;
 }
 
 export interface AddMissionParams {

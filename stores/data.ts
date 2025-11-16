@@ -1,5 +1,5 @@
 import { OrderManager } from '@/common/OrderManager';
-import { DataStoreState, Mission, Order } from '@/types';
+import { DataStoreState, Mission, MissionType, Order } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import {
@@ -9,7 +9,6 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware';
 
-type DataStorePersist = Pick<DataStoreState, 'orders' | 'missionMap'>;
 const customStorage = createJSONStorage(
   () => AsyncStorage
 ) as PersistStorage<DataStoreState>;
@@ -22,6 +21,7 @@ export const useDataStore = create(
     persist<DataStoreState>(
       (set) => ({
         orders: [],
+        orderMap: new Map<string, Order>(),
         missionMap: new Map<string, Mission>(),
         setOrders: (order: Order[]) => {
           set({
@@ -31,9 +31,12 @@ export const useDataStore = create(
         addOrder: (order: Order) => {
           set((state) => {
             const newOrders = [order, ...state.orders];
+            const newOrderMap = new Map(state.orderMap);
+            newOrderMap.set(order.id, order);
 
             return {
               orders: OrderManager.orderToList(newOrders).orders,
+              orderMap: newOrderMap,
             };
           });
         },
@@ -47,6 +50,29 @@ export const useDataStore = create(
             };
           });
         },
+        updateOrderType: (orderId: string, itemType: MissionType) => {
+          console.log('updateOrderType', orderId, itemType);
+          set((state) => {
+            const orderMap = new Map(state.orderMap);
+            const orders = [...state.orders];
+
+            const order = orderMap.get(orderId);
+            if (!order) return {};
+
+            const newOrder = { ...order, itemType };
+            orderMap.set(orderId, newOrder);
+
+            const index = orders.findIndex((o) => o.id === orderId);
+            if (index !== -1) {
+              orders[index] = newOrder;
+            }
+
+            return {
+              orders: OrderManager.orderToList(orders).orders.slice(),
+              orderMap,
+            };
+          });
+        },
       }),
       {
         name: 'rn-todo-data-storage',
@@ -54,19 +80,26 @@ export const useDataStore = create(
 
         partialize: (state) =>
           ({
-            // 只持久化 orders 数组
             orders: state.orders,
+            orderMap: Array.from(state.orderMap.entries()),
             missionMap: Array.from(state.missionMap.entries()),
           } as unknown as DataStoreState),
 
         onRehydrateStorage: (state) => {
           return (persistedState) => {
             // 检查持久化的数据是否存在 missionMap 且是数组
-            if (persistedState && Array.isArray(persistedState.missionMap)) {
-              // 将数组转换回 Map 对象
-              persistedState.missionMap = new Map(
-                persistedState.missionMap as [string, Mission][]
-              );
+            if (persistedState) {
+              if (Array.isArray(persistedState.missionMap)) {
+                persistedState.missionMap = new Map(
+                  persistedState.missionMap as [string, Mission][]
+                );
+              }
+
+              if (Array.isArray(persistedState.orderMap)) {
+                persistedState.orderMap = new Map(
+                  persistedState.orderMap as [string, Order][]
+                );
+              }
             }
           };
         },
