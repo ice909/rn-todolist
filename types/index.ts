@@ -31,6 +31,12 @@ export interface RenderStoreState {
   init: () => void;
 }
 
+export interface DetailStoreState {
+  editingOrderId: string | null;
+  openDetailSheet: (orderId: string) => void;
+  closeDetailSheet: () => void;
+}
+
 export interface DataStoreState {
   orders: Order[];
   orderMap: Map<string, Order>;

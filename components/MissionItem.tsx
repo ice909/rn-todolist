@@ -1,7 +1,8 @@
 import { useDataStore } from '@/stores/data';
 import { useRenderStore } from '@/stores/render';
+import { useDetailStore } from '@/stores/detail';
 import { MissionType, Order } from '@/types';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, Text, Pressable } from 'react-native';
 import { RenderItemParams } from 'react-native-draggable-flatlist';
 import { CustomCheckbox } from './checkbox/CheckBox';
 
@@ -14,8 +15,11 @@ export function MissionItem({
   const missionMap = useDataStore((state) => state.missionMap);
   const updateOrderType = useDataStore((state) => state.updateOrderType);
   const todoOrders = useRenderStore((state) => state.todoOrders);
+  const openDetailSheet = useDetailStore((state) => state.openDetailSheet);
+
   return (
-    <View
+    <Pressable
+      onPress={() => openDetailSheet(item.id)}
       style={[
         styles.item,
         { backgroundColor: isActive ? '#ddd' : '#fff' },
@@ -40,7 +44,7 @@ export function MissionItem({
       <Text style={styles.text} onLongPress={drag}>
         {missionMap.get(item.id)?.missionTitle}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
