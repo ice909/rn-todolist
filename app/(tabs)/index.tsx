@@ -15,12 +15,12 @@ export default function HomeScreen() {
   const setOrders = useDataStore((state) => state.setOrders);
   const [visible, setVisible] = useState(false);
 
-  function handleCreate(title: string, desc: string) {
+  function handleCreate(title: string, desc: string, priority: number) {
     ct.createTask({
       missionTitle: title,
       missionContent: desc,
       missionStartTime: '',
-      missionPriorityId: 4,
+      missionPriorityId: priority,
 
       parentId: '',
       itemType: MissionType.NOT_DONE,

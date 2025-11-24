@@ -6,13 +6,15 @@ export function CustomCheckbox({
   checked,
   onChange,
   size = 22,
+  color,
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   size?: number;
+  color?: string;
 }) {
   const colorScheme = useColorScheme();
-  const color = Colors[colorScheme ?? 'light'];
+  const themeColor = Colors[colorScheme ?? 'light'];
   return (
     <Pressable
       onPress={() => onChange(!checked)}
@@ -23,7 +25,7 @@ export function CustomCheckbox({
         type="material-community"
         name={checked ? 'checkbox-marked' : 'checkbox-blank-outline'}
         size={size}
-        color={color.checkbox}
+        color={color || themeColor.checkbox}
         containerStyle={styles.icon}
       />
     </Pressable>

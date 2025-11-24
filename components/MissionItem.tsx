@@ -17,6 +17,15 @@ export function MissionItem({
   const todoOrders = useRenderStore((state) => state.todoOrders);
   const openDetailSheet = useDetailStore((state) => state.openDetailSheet);
 
+  const mission = missionMap.get(item.id);
+  const priorityColors: Record<number, string> = {
+    1: '#D74A46',
+    2: '#F8B31C',
+    3: '#5378ED',
+    4: '#B5B5B5',
+  };
+  const priorityColor = mission ? priorityColors[mission.missionPriorityId] : undefined;
+
   return (
     <Pressable
       onPress={() => openDetailSheet(item.id)}
@@ -33,6 +42,7 @@ export function MissionItem({
     >
       <CustomCheckbox
         checked={item.itemType === MissionType.DONE}
+        color={item.itemType === MissionType.DONE ? undefined : priorityColor}
         onChange={(checked) => {
           console.log('checked', checked);
           updateOrderType(
