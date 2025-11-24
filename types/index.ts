@@ -45,6 +45,7 @@ export interface DataStoreState {
   addOrder: (order: Order) => void;
   updateMission: (mission: Mission) => void;
   updateOrderType: (orderId: string, itemType: MissionType) => void;
+  deleteOrder: (orderId: string) => void;
 }
 
 export interface AddMissionParams {

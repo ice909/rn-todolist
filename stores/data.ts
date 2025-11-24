@@ -73,6 +73,18 @@ export const useDataStore = create(
             };
           });
         },
+        deleteOrder: (orderId: string) => {
+          set((state) => {
+            const orderMap = new Map(state.orderMap);
+            const orders = state.orders.filter((o) => o.id !== orderId);
+            orderMap.delete(orderId);
+            
+            return {
+              orders: OrderManager.orderToList(orders).orders.slice(),
+              orderMap,
+            };
+          });
+        },
       }),
       {
         name: 'rn-todo-data-storage',

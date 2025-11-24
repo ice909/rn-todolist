@@ -11,7 +11,7 @@ import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { MissionDetailSheet } from '@/components/sheet/TaskDetailSheet';
+import { MissionDetailSheet } from '@/components/sheet/MissionDetailSheet';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

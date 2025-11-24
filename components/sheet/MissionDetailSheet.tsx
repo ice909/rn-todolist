@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {
   BottomSheetModal,
@@ -50,6 +50,16 @@ export function MissionDetailSheet() {
     ),
     []
   );
+
+  const deleteOrder = useDataStore((state) => state.deleteOrder);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleDelete = () => {
+    if (selectedTaskId) {
+      deleteOrder(selectedTaskId);
+      closeDetailSheet();
+    }
+  };
 
   const CustomHandle = useCallback(
     ({ animatedIndex }: BottomSheetHandleProps) => {
@@ -121,11 +131,31 @@ export function MissionDetailSheet() {
             </TouchableOpacity>
           </View>
           <View style={styles.headerCenter} />
-          <View style={styles.headerRight} />
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              onPress={() => setShowMenu(!showMenu)}
+              style={styles.iconButton}
+            >
+              <Icon name="more-vertical" type="feather" size={24} />
+            </TouchableOpacity>
+            {showMenu && (
+              <View style={styles.menu}>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={handleDelete}
+                >
+                  <Icon name="trash-2" type="feather" size={18} color="red" />
+                  <Text style={{ marginLeft: 8, color: 'red', fontSize: 16 }}>
+                    删除
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </Animated.View>
       );
     },
-    [insets.top]
+    [insets.top, showMenu]
   );
 
   const mission = selectedTaskId ? missionMap.get(selectedTaskId) : null;
@@ -198,5 +228,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 19,
+  },
+  menu: {
+    position: 'absolute',
+    top: '100%',
+    right: 10,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    width: 120,
+    zIndex: 100,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 4,
   },
 });
