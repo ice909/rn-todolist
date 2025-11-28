@@ -29,6 +29,7 @@ export function MissionItem({
   return (
     <Pressable
       onPress={() => openDetailSheet(item.id)}
+      onLongPress={drag}
       style={[
         styles.item,
         { backgroundColor: isActive ? '#ddd' : '#fff' },
@@ -51,9 +52,7 @@ export function MissionItem({
           );
         }}
       />
-      <Text style={styles.text} onLongPress={drag}>
-        {missionMap.get(item.id)?.missionTitle}
-      </Text>
+      <Text style={styles.text}>{missionMap.get(item.id)?.missionTitle}</Text>
     </Pressable>
   );
 }
