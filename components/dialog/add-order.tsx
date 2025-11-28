@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  KeyboardAvoidingView,
   StyleSheet,
   View,
-  Platform,
   TextInput,
   useColorScheme,
   Keyboard,
@@ -11,9 +9,13 @@ import {
   Text,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Button, Icon } from '@rneui/themed';
 import { Colors } from '@/constants/theme';
+import Animated from 'react-native-reanimated';
 
 const PRIORITY_OPTIONS = [
   { id: 1, label: '高优先级', color: '#D74A46' },
@@ -31,6 +33,7 @@ export function AddOrder({
   onClose: () => void;
   onConfirm: (title: string, description: string, priority: number) => void;
 }) {
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? 'light'];
   const titleInputRef = React.useRef<TextInput>(null);
@@ -67,7 +70,24 @@ export function AddOrder({
     onClose();
   };
 
-  const currentPriority = PRIORITY_OPTIONS.find((p) => p.id === priority) || PRIORITY_OPTIONS[3];
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const bottomOffset = keyboardHeight > 0 ? keyboardHeight + insets.bottom : 0;
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const currentPriority =
+    PRIORITY_OPTIONS.find((p) => p.id === priority) || PRIORITY_OPTIONS[3];
 
   return (
     <Modal
@@ -77,12 +97,8 @@ export function AddOrder({
       backdropOpacity={0.2}
       backdropTransitionOutTiming={500}
       statusBarTranslucent
-      avoidKeyboard
     >
-      <KeyboardAvoidingView
-        style={style.keyborad}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <Animated.View style={[style.animated, { bottom: bottomOffset }]}>
         <SafeAreaView style={style.content}>
           <TextInput
             ref={titleInputRef}
@@ -137,7 +153,9 @@ export function AddOrder({
                         size={20}
                         color={option.color}
                       />
-                      <Text style={{ marginLeft: 8, fontSize: 16, color: '#333' }}>
+                      <Text
+                        style={{ marginLeft: 8, fontSize: 16, color: '#333' }}
+                      >
                         {option.label}
                       </Text>
                     </TouchableOpacity>
@@ -157,7 +175,7 @@ export function AddOrder({
             ></Button>
           </View>
         </SafeAreaView>
-      </KeyboardAvoidingView>
+      </Animated.View>
     </Modal>
   );
 }
@@ -166,18 +184,19 @@ const style = StyleSheet.create({
   modal: {
     margin: 0,
   },
-  keyborad: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  content: {
-    paddingHorizontal: 10,
-    paddingTop: 4,
-    paddingBottom: 10,
+  animated: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     backgroundColor: 'white',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     gap: 0,
+    paddingHorizontal: 10,
+  },
+  content: {
+    paddingTop: 4,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 16,
