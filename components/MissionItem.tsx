@@ -3,7 +3,7 @@ import { useRenderStore } from '@/stores/render';
 import { useDetailStore } from '@/stores/detail';
 import { MissionType, Order } from '@/types';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
-import { CustomCheckbox } from './checkbox/CheckBox';
+import { Checkbox } from './checkbox/CheckBox';
 
 export function MissionItem({ item, index }: { item: Order; index: number }) {
   const missionMap = useDataStore((state) => state.missionMap);
@@ -12,15 +12,6 @@ export function MissionItem({ item, index }: { item: Order; index: number }) {
   const openDetailSheet = useDetailStore((state) => state.openDetailSheet);
 
   const mission = missionMap.get(item.id);
-  const priorityColors: Record<number, string> = {
-    1: '#D74A46',
-    2: '#F8B31C',
-    3: '#5378ED',
-    4: '#B5B5B5',
-  };
-  const priorityColor = mission
-    ? priorityColors[mission.missionPriorityId]
-    : undefined;
 
   return (
     <Pressable
@@ -41,11 +32,10 @@ export function MissionItem({ item, index }: { item: Order; index: number }) {
       ]}
     >
       <View style={[styles.inner]}>
-        <CustomCheckbox
+        <Checkbox
           checked={item.itemType === MissionType.DONE}
-          color={item.itemType === MissionType.DONE ? undefined : priorityColor}
+          priority={mission?.missionPriorityId}
           onChange={(checked) => {
-            console.log('checked', checked);
             updateOrderType(
               item.id,
               checked ? MissionType.DONE : MissionType.NOT_DONE

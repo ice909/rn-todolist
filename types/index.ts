@@ -44,6 +44,7 @@ export interface DataStoreState {
   setOrders: (order: Order[]) => void;
   addOrder: (order: Order) => void;
   updateMission: (mission: Mission) => void;
+  updateMissionPriority: (missionId: string, priority: number) => void;
   updateOrderType: (orderId: string, itemType: MissionType) => void;
   deleteOrder: (orderId: string) => void;
 }

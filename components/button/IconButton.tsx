@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   ViewStyle,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { Icon, IconProps } from '@rneui/themed';
 
@@ -27,23 +28,29 @@ export const IconButton: React.FC<IconButtonProps> = ({
   hitSize = 38,
 }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={disabled || loading}
-      style={[
+      style={({ pressed }) => [
         styles.container,
-        { width: hitSize, height: hitSize, borderRadius: hitSize / 2 },
+        { width: hitSize, height: hitSize },
         containerStyle,
         disabled && styles.disabled,
+        pressed && Platform.OS !== 'android' && styles.pressed,
       ]}
-      activeOpacity={0.6}
+      android_ripple={{
+        color: 'rgba(0, 0, 0, 0.12)',
+        borderless: false,
+        foreground: true,
+      }}
+      hitSlop={8}
     >
       {loading ? (
         <ActivityIndicator size="small" />
       ) : (
         <Icon {...icon} size={size} />
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -51,9 +58,14 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   disabled: {
     opacity: 0.4,
+  },
+  pressed: {
+    opacity: 0.6,
   },
 });
 

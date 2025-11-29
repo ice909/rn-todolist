@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Icon } from '@rneui/themed';
+import IconButton from './button/IconButton';
 
 export const PRIORITY_OPTIONS = [
   { id: 1, label: '高优先级', color: '#D74A46' },
@@ -28,17 +29,15 @@ export function PrioritySelect({ priority, onChange }: PrioritySelectProps) {
 
   return (
     <View>
-      <TouchableOpacity
+      <IconButton
+        icon={{
+          name: "flag",
+          type: "feather",
+          color: currentPriority.color
+        }}
+        size={20}        
         onPress={() => setVisible(!visible)}
-        style={styles.priorityButton}
-      >
-        <Icon
-          name="flag"
-          type="feather"
-          size={20}
-          color={currentPriority.color}
-        />
-      </TouchableOpacity>
+      />
 
       {visible && (
         <>

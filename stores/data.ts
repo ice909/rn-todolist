@@ -50,6 +50,20 @@ export const useDataStore = create(
             };
           });
         },
+        updateMissionPriority: (missionId: string, priority: number) => {
+          set((state) => {
+            const mission = state.missionMap.get(missionId);
+            if (!mission) return {};
+
+            const updatedMission = { ...mission, missionPriorityId: priority };
+            const newMissionMap = new Map(state.missionMap);
+            newMissionMap.set(missionId, updatedMission);
+
+            return {
+              missionMap: newMissionMap,
+            };
+          });
+        },
         updateOrderType: (orderId: string, itemType: MissionType) => {
           console.log('updateOrderType', orderId, itemType);
           set((state) => {
