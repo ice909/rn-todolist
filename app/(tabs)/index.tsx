@@ -1,5 +1,5 @@
 import { FloatingAddButton } from '@/components/button/FloatingAddButton';
-import { AddOrder } from '@/components/dialog/add-order';
+import { AddOrder } from '@/components/dialog/AddOrder';
 import { List } from '@/components/List';
 import { EmptyState } from '@/components/empty/EmptyState';
 import { Page } from '@/components/page';
