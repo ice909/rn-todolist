@@ -45,6 +45,7 @@ export function AddOrder({
   }, [visible]);
 
   const handleConfirm = () => {
+    if (!title.trim()) return;
     Keyboard.dismiss();
     onConfirm(title, desc, priority);
     setTitle('');
@@ -77,8 +78,6 @@ export function AddOrder({
       hideSub.remove();
     };
   }, []);
-
-
 
   return (
     <Modal
