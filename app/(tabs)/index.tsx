@@ -1,10 +1,9 @@
 import { FloatingAddButton } from '@/components/button/FloatingAddButton';
 import { AddOrder } from '@/components/dialog/add-order';
-import { DraggableList } from '@/components/draggable-list';
+import { List } from '@/components/List';
 import { EmptyState } from '@/components/empty/EmptyState';
 import { Page } from '@/components/page';
 import { useCreateTask } from '@/hooks/use-create-task';
-import { useDataStore } from '@/stores/data';
 import { useRenderStore } from '@/stores/render';
 import { MissionType } from '@/types';
 import { useState } from 'react';
@@ -12,7 +11,6 @@ import { useState } from 'react';
 export default function HomeScreen() {
   const ct = useCreateTask();
   const orders = useRenderStore((state) => state.todoOrders);
-  const setOrders = useDataStore((state) => state.setOrders);
   const [visible, setVisible] = useState(false);
 
   function handleCreate(title: string, desc: string, priority: number) {
@@ -34,9 +32,7 @@ export default function HomeScreen() {
     if (orders.length === 0) {
       return <EmptyState />;
     }
-    return (
-      <DraggableList data={orders} onDragEnd={(data) => setOrders(data)} />
-    );
+    return <List data={orders} />;
   }
 
   return (
