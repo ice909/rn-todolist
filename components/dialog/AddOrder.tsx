@@ -16,6 +16,9 @@ import { Colors } from '@/constants/theme';
 import Animated from 'react-native-reanimated';
 
 import { PrioritySelect } from '../PrioritySelect';
+import {
+  MenuProvider,
+} from 'react-native-popup-menu';
 
 export function AddOrder({
   visible,
@@ -88,51 +91,54 @@ export function AddOrder({
       backdropTransitionOutTiming={500}
       statusBarTranslucent
     >
-      <Animated.View style={[style.animated, { bottom: bottomOffset }]}>
-        <SafeAreaView style={style.content}>
-          <TextInput
-            ref={titleInputRef}
-            style={style.title}
-            placeholder="准备做什么？"
-            placeholderTextColor="#D9D9D9"
-            value={title}
-            onChangeText={setTitle}
-          />
-          <TextInput
-            style={style.description}
-            placeholder="描述"
-            placeholderTextColor="#D9D9D9"
-            value={desc}
-            onChangeText={setDesc}
-          />
-          <View style={{ height: 8 }}></View>
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 10,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <View style={{ position: 'relative', zIndex: 10 }}>
-              <PrioritySelect
-                priority={priority}
-                onChange={(p) => setPriority(p)}
-              />
-            </View>
-            <Button
-              radius={6}
-              buttonStyle={{
-                backgroundColor: color.primary,
+      <MenuProvider skipInstanceCheck>
+        <Animated.View style={[style.animated, { bottom: bottomOffset }]}>
+          <SafeAreaView style={style.content}>
+            <TextInput
+              ref={titleInputRef}
+              style={style.title}
+              placeholder="准备做什么？"
+              placeholderTextColor="#D9D9D9"
+              value={title}
+              onChangeText={setTitle}
+            />
+            <TextInput
+              style={style.description}
+              placeholder="描述"
+              placeholderTextColor="#D9D9D9"
+              value={desc}
+              onChangeText={setDesc}
+            />
+            <View style={{ height: 8 }}></View>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                justifyContent: 'space-between',
+                alignItems: 'center',
               }}
-              titleStyle={{ paddingHorizontal: 8 }}
-              size="md"
-              title="创建"
-              onPress={handleConfirm}
-            ></Button>
-          </View>
-        </SafeAreaView>
-      </Animated.View>
+            >
+              <View style={{ position: 'relative', zIndex: 10 }}>
+                <PrioritySelect
+                  priority={priority}
+                  placementType="top"
+                  onChange={(p) => setPriority(p)}
+                />
+              </View>
+              <Button
+                radius={6}
+                buttonStyle={{
+                  backgroundColor: color.primary,
+                }}
+                titleStyle={{ paddingHorizontal: 8 }}
+                size="md"
+                title="创建"
+                onPress={handleConfirm}
+              ></Button>
+            </View>
+          </SafeAreaView>
+        </Animated.View>
+      </MenuProvider>
     </Modal>
   );
 }
@@ -161,5 +167,4 @@ const style = StyleSheet.create({
   description: {
     fontSize: 14,
   },
-
 });

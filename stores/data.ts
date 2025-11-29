@@ -65,7 +65,6 @@ export const useDataStore = create(
           });
         },
         updateOrderType: (orderId: string, itemType: MissionType) => {
-          console.log('updateOrderType', orderId, itemType);
           set((state) => {
             const orderMap = new Map(state.orderMap);
             const orders = [...state.orders];
@@ -92,7 +91,7 @@ export const useDataStore = create(
             const orderMap = new Map(state.orderMap);
             const orders = state.orders.filter((o) => o.id !== orderId);
             orderMap.delete(orderId);
-            
+
             return {
               orders: OrderManager.orderToList(orders).orders.slice(),
               orderMap,

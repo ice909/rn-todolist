@@ -9,12 +9,20 @@ import { useDataStore } from '@/stores/data';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDetailStore } from '@/stores/detail';
 import { MissionDetailHandle } from './MissionDetailHandle';
+import { Checkbox } from '../checkbox/CheckBox';
+import { MissionType } from '@/types';
+import { PrioritySelect } from '../PrioritySelect';
 
 export function MissionDetailSheet() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const selectedTaskId = useDetailStore((state) => state.editingOrderId);
+  const editingOrderId = useDetailStore((state) => state.editingOrderId);
   const closeDetailSheet = useDetailStore((state) => state.closeDetailSheet);
   const missionMap = useDataStore((state) => state.missionMap);
+  const orderMap = useDataStore((state) => state.orderMap);
+  const updateOrderType = useDataStore((state) => state.updateOrderType);
+  const updateMissionPriority = useDataStore(
+    (state) => state.updateMissionPriority
+  );
   const insets = useSafeAreaInsets();
 
   const snapPoints = useMemo(() => ['50%', '100%'], []);
@@ -29,12 +37,12 @@ export function MissionDetailSheet() {
   );
 
   useEffect(() => {
-    if (selectedTaskId) {
+    if (editingOrderId) {
       bottomSheetModalRef.current?.present();
     } else {
       bottomSheetModalRef.current?.dismiss();
     }
-  }, [selectedTaskId]);
+  }, [editingOrderId]);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -52,11 +60,26 @@ export function MissionDetailSheet() {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleDelete = () => {
-    if (selectedTaskId) {
-      deleteOrder(selectedTaskId);
+    if (editingOrderId) {
+      deleteOrder(editingOrderId);
       closeDetailSheet();
     }
   };
+
+  function handleCheckboxChange(checked: boolean) {
+    if (editingOrderId) {
+      updateOrderType(
+        editingOrderId,
+        checked ? MissionType.DONE : MissionType.NOT_DONE
+      );
+    }
+  }
+
+  function handlePriorityChange(priority: number) {
+    if (editingOrderId) {
+      updateMissionPriority(editingOrderId, priority);
+    }
+  }
 
   const renderHandle = useCallback(
     (props: any) => (
@@ -72,7 +95,7 @@ export function MissionDetailSheet() {
     [showMenu, handleDelete, insets]
   );
 
-  const mission = selectedTaskId ? missionMap.get(selectedTaskId) : null;
+  const mission = editingOrderId ? missionMap.get(editingOrderId) : null;
 
   return (
     <BottomSheetModal
@@ -88,6 +111,26 @@ export function MissionDetailSheet() {
       <BottomSheetView style={styles.contentContainer}>
         {mission ? (
           <View>
+            <View style={styles.topRow}>
+              <View style={{ padding: 8 }}>
+                <Checkbox
+                  size={22}
+                  checked={
+                    !!(
+                      editingOrderId &&
+                      orderMap.get(editingOrderId)?.itemType ===
+                        MissionType.DONE
+                    )
+                  }
+                  onChange={handleCheckboxChange}
+                />
+              </View>
+
+              <PrioritySelect
+                priority={mission.missionPriorityId}
+                onChange={handlePriorityChange}
+              />
+            </View>
             <Text style={styles.title}>{mission.missionTitle}</Text>
             <Text style={styles.content}>{mission.missionContent}</Text>
           </View>
@@ -117,12 +160,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 12,
     zIndex: 10,
-  },
-  iconContainer: {
-    width: 38,
-    height: 38,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   title: {
     fontSize: 24,

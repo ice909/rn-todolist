@@ -11,6 +11,7 @@ import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { MenuProvider } from 'react-native-popup-menu';
 import { MissionDetailSheet } from '@/components/sheet/MissionDetailSheet';
 
 export default function RootLayout() {
@@ -22,15 +23,19 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style="auto" />
-          <MissionDetailSheet />
-        </ThemeProvider>
-      </BottomSheetModalProvider>
+      <MenuProvider>
+        <BottomSheetModalProvider>
+          <ThemeProvider
+            value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <StatusBar style="auto" />
+            <MissionDetailSheet />
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </MenuProvider>
     </GestureHandlerRootView>
   );
 }
