@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -24,6 +24,8 @@ export function MissionDetailSheet() {
     (state) => state.updateMissionPriority
   );
   const insets = useSafeAreaInsets();
+  const updateMission = useDataStore((state) => state.updateMission);
+  const titleInputRef = useRef<TextInput>(null);
 
   const snapPoints = useMemo(() => ['50%', '100%'], []);
 
@@ -97,6 +99,20 @@ export function MissionDetailSheet() {
 
   const mission = editingOrderId ? missionMap.get(editingOrderId) : null;
 
+  const onInputFocus = () => {
+    bottomSheetModalRef.current?.snapToIndex(1);
+  };
+
+  const onChangeTitle = (text: string) => {
+    if (!mission) return;
+    if (text !== mission?.missionTitle) {
+      updateMission({
+        ...mission,
+        missionTitle: text,
+      });
+    }
+  };
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -131,7 +147,15 @@ export function MissionDetailSheet() {
                 onChange={handlePriorityChange}
               />
             </View>
-            <Text style={styles.title}>{mission.missionTitle}</Text>
+            <TextInput
+              ref={titleInputRef}
+              style={styles.title}
+              placeholder="准备做什么？"
+              placeholderTextColor="#D9D9D9"
+              onFocus={onInputFocus}
+              value={mission.missionTitle}
+              onChangeText={onChangeTitle}
+            />
             <Text style={styles.content}>{mission.missionContent}</Text>
           </View>
         ) : (
