@@ -49,6 +49,10 @@ export interface DataStoreState {
   deleteOrder: (orderId: string) => void;
 }
 
+export interface DBStoreState {
+  init: () => Promise<void>
+}
+
 export interface AddMissionParams {
   mission: Mission;
   order: Order;

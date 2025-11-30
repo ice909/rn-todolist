@@ -13,12 +13,13 @@ import 'react-native-get-random-values';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MenuProvider } from 'react-native-popup-menu';
 import { MissionDetailSheet } from '@/components/sheet/MissionDetailSheet';
+import { useDBStore } from '@/stores/db';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    useRenderStore.getState().init();
+    useDBStore.getState().init().then( useRenderStore.getState().init)
   }, []);
 
   return (
