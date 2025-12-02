@@ -13,14 +13,28 @@ import 'react-native-get-random-values';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MenuProvider } from 'react-native-popup-menu';
 import { MissionDetailSheet } from '@/components/sheet/MissionDetailSheet';
-import { useDBStore } from '@/stores/db';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
+import migrations from '../drizzle/migrations';
+import { db } from '@/db/db';
+import { useDataStore } from '@/stores/data';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { success, error } = useMigrations(db, migrations);
 
   useEffect(() => {
-    useDBStore.getState().init().then( useRenderStore.getState().init)
-  }, []);
+    if (!success) return;
+    (async () => {
+      useRenderStore.getState().init();
+      useDataStore.getState().init();
+      // await db.run('DROP TABLE IF EXISTS localOrders');
+      // await db.run('DROP TABLE IF EXISTS localMissions');
+    })();
+  }, [success]);
+
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

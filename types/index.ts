@@ -47,6 +47,7 @@ export interface DataStoreState {
   updateMissionPriority: (missionId: string, priority: number) => void;
   updateOrderType: (orderId: string, itemType: MissionType) => void;
   deleteOrder: (orderId: string) => void;
+  init: () => void;
 }
 
 export interface DBStoreState {
