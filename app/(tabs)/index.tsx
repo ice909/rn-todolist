@@ -22,7 +22,7 @@ export default function HomeScreen() {
 
       parentId: '',
       itemType: MissionType.NOT_DONE,
-      insertPosition: 'first',
+      insertPosition: 0,
 
       onCreateSuccess: () => {},
     });

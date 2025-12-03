@@ -71,7 +71,8 @@ export function useCreateTask() {
     //   }
     //   addMissionParams.insertPosition = params.insertPosition;
     // } else {
-    //   addMissionParams.insertIndex = params.insertPosition;
+    if (typeof params.insertPosition == 'number')
+      addMissionParams.insertIndex = params.insertPosition;
     // }
 
     // 拖动创建按钮添加待办需要在添加前移除掉占位任务

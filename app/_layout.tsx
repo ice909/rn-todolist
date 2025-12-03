@@ -20,7 +20,7 @@ import { useDataStore } from '@/stores/data';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { success, error } = useMigrations(db, migrations);
+  const { success } = useMigrations(db, migrations);
 
   useEffect(() => {
     if (!success) return;
@@ -31,10 +31,6 @@ export default function RootLayout() {
       // await db.run('DROP TABLE IF EXISTS localMissions');
     })();
   }, [success]);
-
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

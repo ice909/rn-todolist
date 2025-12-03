@@ -3,6 +3,7 @@ import { db } from '@/db/db';
 import { localMissionTable } from '@/db/schema/localMissions';
 import { localOrderTable } from '@/db/schema/localOrders';
 import { DataStoreState, Mission, MissionType, Order } from '@/types';
+import { sql } from 'drizzle-orm';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
@@ -10,80 +11,84 @@ import { subscribeWithSelector } from 'zustand/middleware';
  * 数据层
  */
 export const useDataStore = create(
-  subscribeWithSelector<DataStoreState>((set) => ({
+  subscribeWithSelector<DataStoreState>((set, get) => ({
     orders: [],
     orderMap: new Map<string, Order>(),
     missionMap: new Map<string, Mission>(),
-    setOrders: (order: Order[]) => {
+    setOrders: (orders: Order[]) => {
       set({
-        orders: OrderManager.orderToList(order).orders,
+        orders: OrderManager.orderToList(orders).orders,
+        orderMap: new Map(orders.map((o) => [o.id, o])),
       });
+
+      db.insert(localOrderTable)
+        .values(orders)
+        .onConflictDoUpdate({
+          target: localOrderTable.id,
+          set: {
+            parent: sql`excluded.parent`,
+            num: sql`excluded.num`,
+            deleted: sql`excluded.deleted`,
+            itemType: sql`excluded.itemType`,
+            userId: sql`excluded.userId`,
+          },
+        });
     },
-    addOrder: (order: Order) => {
-      set((state) => {
-        const newOrders = [order, ...state.orders];
-        const newOrderMap = new Map(state.orderMap);
-        newOrderMap.set(order.id, order);
-
-        db.insert(localOrderTable)
-          .values([order])
-          .catch((err) => console.error(err));
-
-        return {
-          orders: OrderManager.orderToList(newOrders).orders,
-          orderMap: newOrderMap,
-        };
+    updateOrderInfos: (orders: Order[]) => {
+      let map = new Map<string, Order>();
+      orders.forEach((v) => {
+        map.set(v.id, v);
       });
-    },
-    updateMission: (mission: Mission) => {
-      set((state) => {
-        const newMissionMap = new Map(state.missionMap);
-        newMissionMap.set(mission.missionId, mission);
-
-        db.insert(localMissionTable)
-          .values([mission])
-          .catch((err) => console.error(err));
-
-        return {
-          missionMap: newMissionMap,
-        };
-      });
-    },
-    updateMissionPriority: (missionId: string, priority: number) => {
-      set((state) => {
-        const mission = state.missionMap.get(missionId);
-        if (!mission) return {};
-
-        const updatedMission = { ...mission, missionPriorityId: priority };
-        const newMissionMap = new Map(state.missionMap);
-        newMissionMap.set(missionId, updatedMission);
-
-        return {
-          missionMap: newMissionMap,
-        };
-      });
-    },
-    updateOrderType: (orderId: string, itemType: MissionType) => {
-      set((state) => {
-        const orderMap = new Map(state.orderMap);
-        const orders = [...state.orders];
-
-        const order = orderMap.get(orderId);
-        if (!order) return {};
-
-        const newOrder = { ...order, itemType };
-        orderMap.set(orderId, newOrder);
-
-        const index = orders.findIndex((o) => o.id === orderId);
-        if (index !== -1) {
-          orders[index] = newOrder;
+      const _orders = get().orders;
+      let updateCount = 0;
+      for (let i = 0; i < _orders.length; i++) {
+        const v = _orders[i];
+        if (updateCount >= orders.length) {
+          break;
         }
+        if (map.has(v.id)) {
+          const order = map.get(v.id)!;
+          _orders[i] = {
+            ...order,
+          };
+          updateCount++;
+          continue;
+        }
+      }
+      if (!updateCount) return;
+      set({
+        orders: OrderManager.orderToList(_orders).orders,
+        orderMap: new Map(orders.map((o) => [o.id, o])),
+      });
+
+      db.insert(localOrderTable)
+        .values(orders)
+        .onConflictDoUpdate({
+          target: localOrderTable.id,
+          set: {
+            parent: sql`excluded.parent`,
+            num: sql`excluded.num`,
+            deleted: sql`excluded.deleted`,
+            itemType: sql`excluded.itemType`,
+            userId: sql`excluded.userId`,
+          },
+        });
+    },
+    updateMissionMap: (missions: Mission[]) => {
+      if (!missions.length) return;
+      set((state) => {
+        const newMissionMap = new Map(state.missionMap);
+        missions.forEach((m) => {
+          newMissionMap.set(m.missionId, m);
+        });
 
         return {
-          orders: OrderManager.orderToList(orders).orders.slice(),
-          orderMap,
+          missionMap: newMissionMap,
         };
       });
+      db.insert(localMissionTable)
+        .values(missions)
+        .catch((err) => console.error(err));
     },
     deleteOrder: (orderId: string) => {
       set((state) => {

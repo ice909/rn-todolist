@@ -42,10 +42,8 @@ export interface DataStoreState {
   orderMap: Map<string, Order>;
   missionMap: Map<string, Mission>;
   setOrders: (order: Order[]) => void;
-  addOrder: (order: Order) => void;
-  updateMission: (mission: Mission) => void;
-  updateMissionPriority: (missionId: string, priority: number) => void;
-  updateOrderType: (orderId: string, itemType: MissionType) => void;
+  updateOrderInfos: (orders: Order[]) => void;
+  updateMissionMap: (missions: Mission[]) => void;
   deleteOrder: (orderId: string) => void;
   init: () => void;
 }

@@ -12,6 +12,7 @@ import { MissionDetailHandle } from './MissionDetailHandle';
 import { Checkbox } from '../checkbox/CheckBox';
 import { MissionType } from '@/types';
 import { PrioritySelect } from '../PrioritySelect';
+import { useTaskStore } from '@/stores/task';
 
 export function MissionDetailSheet() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -19,12 +20,10 @@ export function MissionDetailSheet() {
   const closeDetailSheet = useDetailStore((state) => state.closeDetailSheet);
   const missionMap = useDataStore((state) => state.missionMap);
   const orderMap = useDataStore((state) => state.orderMap);
-  const updateOrderType = useDataStore((state) => state.updateOrderType);
-  const updateMissionPriority = useDataStore(
-    (state) => state.updateMissionPriority
-  );
+  const toggleDoneOrder = useTaskStore((state) => state.toggleDoneOrder);
+  const saveMission = useTaskStore((state) => state.saveMission);
   const insets = useSafeAreaInsets();
-  const updateMission = useDataStore((state) => state.updateMission);
+  const updateMission = useDataStore((state) => state.updateMissionMap);
   const titleInputRef = useRef<TextInput>(null);
 
   const snapPoints = useMemo(() => ['50%', '100%'], []);
@@ -70,16 +69,17 @@ export function MissionDetailSheet() {
 
   function handleCheckboxChange(checked: boolean) {
     if (editingOrderId) {
-      updateOrderType(
-        editingOrderId,
-        checked ? MissionType.DONE : MissionType.NOT_DONE
-      );
+      const order = orderMap.get(editingOrderId)
+      if (!order) return
+      order.itemType = order?.itemType === MissionType.NOT_DONE ? MissionType.DONE : MissionType.NOT_DONE
+      toggleDoneOrder(order)
     }
   }
 
   function handlePriorityChange(priority: number) {
     if (editingOrderId) {
-      updateMissionPriority(editingOrderId, priority);
+      if (!mission) return;
+      saveMission([{ ...mission, missionPriorityId: priority }]);
     }
   }
 
@@ -106,10 +106,12 @@ export function MissionDetailSheet() {
   const onChangeTitle = (text: string) => {
     if (!mission) return;
     if (text !== mission?.missionTitle) {
-      updateMission({
-        ...mission,
-        missionTitle: text,
-      });
+      updateMission([
+        {
+          ...mission,
+          missionTitle: text,
+        },
+      ]);
     }
   };
 
