@@ -73,6 +73,22 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="debug"
+        options={{
+          title: '调试',
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons
+              name="bug"
+              size={26}
+              color={color}
+              style={{
+                marginTop: focused ? 0 : 5,
+              }}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

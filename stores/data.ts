@@ -16,13 +16,14 @@ export const useDataStore = create(
     orderMap: new Map<string, Order>(),
     missionMap: new Map<string, Mission>(),
     setOrders: (orders: Order[]) => {
+      const _orders = OrderManager.orderToList(orders).orders;
       set({
-        orders: OrderManager.orderToList(orders).orders,
-        orderMap: new Map(orders.map((o) => [o.id, o])),
+        orders: _orders,
+        orderMap: new Map(_orders.map((o) => [o.id, o])),
       });
 
       db.insert(localOrderTable)
-        .values(orders)
+        .values(_orders)
         .onConflictDoUpdate({
           target: localOrderTable.id,
           set: {
@@ -32,7 +33,8 @@ export const useDataStore = create(
             itemType: sql`excluded.itemType`,
             userId: sql`excluded.userId`,
           },
-        });
+        })
+        .run();
     },
     updateOrderInfos: (orders: Order[]) => {
       let map = new Map<string, Order>();
@@ -56,13 +58,14 @@ export const useDataStore = create(
         }
       }
       if (!updateCount) return;
+      const listOrders = OrderManager.orderToList(_orders).orders;
       set({
-        orders: OrderManager.orderToList(_orders).orders,
-        orderMap: new Map(orders.map((o) => [o.id, o])),
+        orders: listOrders,
+        orderMap: new Map(listOrders.map((o) => [o.id, o])),
       });
 
       db.insert(localOrderTable)
-        .values(orders)
+        .values(listOrders)
         .onConflictDoUpdate({
           target: localOrderTable.id,
           set: {
@@ -72,7 +75,8 @@ export const useDataStore = create(
             itemType: sql`excluded.itemType`,
             userId: sql`excluded.userId`,
           },
-        });
+        })
+        .run();
     },
     updateMissionMap: (missions: Mission[]) => {
       if (!missions.length) return;
@@ -88,7 +92,19 @@ export const useDataStore = create(
       });
       db.insert(localMissionTable)
         .values(missions)
-        .catch((err) => console.error(err));
+        .onConflictDoUpdate({
+          target: localMissionTable.missionId,
+          set: {
+            missionTitle: sql`excluded.missionTitle`,
+            missionContent: sql`excluded.missionContent`,
+            missionPriorityId: sql`excluded.missionPriorityId`,
+            missionStartTime: sql`excluded.missionStartTime`,
+            missionEndTime: sql`excluded.missionEndTime`,
+            modifyAt: sql`excluded.modifyAt`,
+            userId: sql`excluded.userId`,
+          },
+        })
+        .run();
     },
     deleteOrder: (orderId: string) => {
       set((state) => {
@@ -124,7 +140,7 @@ export const useDataStore = create(
         ])
       );
       set({
-        orders,
+        orders: OrderManager.unorderToList(orders).orders,
         orderMap,
         missionMap,
       });

@@ -6,7 +6,7 @@ export function useCreateTask() {
   const ts = useTaskStore((state) => state);
   function createParams(params: CreateParamsParams) {
     // 获取当前时间
-    const time = new Date().toString();
+    const time = new Date().toISOString();
 
     // 任务
     const mission: Mission = {
