@@ -6,6 +6,7 @@ export const useTaskStore = create<{
   addMission: (params: AddMissionParams) => Promise<void>;
   saveMission: (missions: Mission[]) => Promise<void>;
   toggleDoneOrder: (order: Order) => Promise<void>;
+  saveOrders: (orders: Order[]) => Promise<void>;
 }>(() => ({
   addMission: async (params: AddMissionParams) => {
     const ds = useDataStore.getState();
@@ -39,5 +40,8 @@ export const useTaskStore = create<{
   },
   toggleDoneOrder: async (order: Order) => {
     useDataStore.getState().updateOrderInfos([order])
+  },
+  saveOrders: async (orders: Order[]) => {
+    useDataStore.getState().updateOrderInfos(orders)
   }
 }));

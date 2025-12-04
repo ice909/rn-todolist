@@ -26,13 +26,15 @@ export enum MissionType {
 export interface RenderStoreState {
   todoOrders: Order[];
   doneOrders: Order[];
-  _unsubscribe: null | VoidFunction,
+  deletedOrders: Order[];
+  _unsubscribe: null | VoidFunction;
   updateDerived: () => void;
   init: () => void;
 }
 
 export interface DetailStoreState {
   editingOrderId: string | null;
+  editingOrder: Order | null;
   openDetailSheet: (orderId: string) => void;
   closeDetailSheet: () => void;
 }

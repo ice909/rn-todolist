@@ -5,13 +5,19 @@ import { useDataStore } from './data';
 export const useRenderStore = create<RenderStoreState>((set, get) => ({
   todoOrders: [],
   doneOrders: [],
+  deletedOrders: [],
 
   updateDerived() {
     const { orders } = useDataStore.getState();
 
     set({
-      todoOrders: orders.filter((m) => m.itemType === MissionType.NOT_DONE),
-      doneOrders: orders.filter((m) => m.itemType === MissionType.DONE),
+      todoOrders: orders.filter(
+        (m) => m.itemType === MissionType.NOT_DONE && !m.deleted
+      ),
+      doneOrders: orders.filter(
+        (m) => m.itemType === MissionType.DONE && !m.deleted
+      ),
+      deletedOrders: orders.filter((m) => m.deleted),
     });
   },
 

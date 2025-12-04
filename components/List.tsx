@@ -1,6 +1,6 @@
 import { Order } from '@/types';
 import { MissionItem } from './MissionItem';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 
 export function List({

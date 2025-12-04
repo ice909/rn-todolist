@@ -17,11 +17,13 @@ import { useTaskStore } from '@/stores/task';
 export function MissionDetailSheet() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const editingOrderId = useDetailStore((state) => state.editingOrderId);
+  const editingOrder = useDetailStore((state) => state.editingOrder);
   const closeDetailSheet = useDetailStore((state) => state.closeDetailSheet);
   const missionMap = useDataStore((state) => state.missionMap);
   const orderMap = useDataStore((state) => state.orderMap);
   const toggleDoneOrder = useTaskStore((state) => state.toggleDoneOrder);
   const saveMission = useTaskStore((state) => state.saveMission);
+  const saveOrders = useTaskStore((state) => state.saveOrders);
   const insets = useSafeAreaInsets();
   const updateMission = useDataStore((state) => state.updateMissionMap);
   const titleInputRef = useRef<TextInput>(null);
@@ -57,22 +59,23 @@ export function MissionDetailSheet() {
     []
   );
 
-  const deleteOrder = useDataStore((state) => state.deleteOrder);
   const [showMenu, setShowMenu] = useState(false);
 
   const handleDelete = () => {
-    if (editingOrderId) {
-      deleteOrder(editingOrderId);
+    if (editingOrder) {
+      editingOrder.deleted = true;
+      saveOrders([editingOrder]);
       closeDetailSheet();
     }
   };
 
   function handleCheckboxChange(checked: boolean) {
-    if (editingOrderId) {
-      const order = orderMap.get(editingOrderId)
-      if (!order) return
-      order.itemType = order?.itemType === MissionType.NOT_DONE ? MissionType.DONE : MissionType.NOT_DONE
-      toggleDoneOrder(order)
+    if (editingOrder) {
+      editingOrder.itemType =
+        editingOrder?.itemType === MissionType.NOT_DONE
+          ? MissionType.DONE
+          : MissionType.NOT_DONE;
+      toggleDoneOrder(editingOrder);
     }
   }
 
