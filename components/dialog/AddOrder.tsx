@@ -11,7 +11,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { Button, Icon } from '@rneui/themed';
+import { Button } from '@rneui/themed';
 import { Colors } from '@/constants/theme';
 import Animated from 'react-native-reanimated';
 
@@ -86,6 +86,7 @@ export function AddOrder({
     <Modal
       isVisible={visible}
       onBackdropPress={handleCancel}
+      onBackButtonPress={handleCancel}
       style={style.modal}
       backdropOpacity={0.2}
       backdropTransitionOutTiming={500}
