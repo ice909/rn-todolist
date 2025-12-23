@@ -9,18 +9,14 @@ import { Icon } from '@rneui/themed';
 
 interface MissionDetailHandleProps extends BottomSheetHandleProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
-  showMenu: boolean;
-  setShowMenu: (show: boolean) => void;
-  handleDelete: () => void;
+  onMenuPress: () => void;
   insets: { top: number };
 }
 
 export function MissionDetailHandle({
   animatedIndex,
   bottomSheetModalRef,
-  showMenu,
-  setShowMenu,
-  handleDelete,
+  onMenuPress,
   insets,
 }: MissionDetailHandleProps) {
   const containerStyle = useAnimatedStyle(() => {
@@ -93,24 +89,11 @@ export function MissionDetailHandle({
       <View style={styles.headerCenter} />
       <View style={styles.headerRight}>
         <TouchableOpacity
-          onPress={() => setShowMenu(!showMenu)}
+          onPress={onMenuPress}
           style={styles.iconButton}
         >
           <Icon name="more-vertical" type="feather" size={24} />
         </TouchableOpacity>
-        {showMenu && (
-          <View style={styles.menu}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={handleDelete}
-            >
-              <Icon name="trash-2" type="feather" size={18} color="red" />
-              <Text style={{ marginLeft: 8, color: 'red', fontSize: 16 }}>
-                删除
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
     </Animated.View>
   );

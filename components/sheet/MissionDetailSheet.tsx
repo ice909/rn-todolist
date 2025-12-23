@@ -13,9 +13,12 @@ import { Checkbox } from '../checkbox/CheckBox';
 import { MissionType } from '@/types';
 import { PrioritySelect } from '../PrioritySelect';
 import { useTaskStore } from '@/stores/task';
+import { MenuActionSheet } from './MenuActionSheet';
 
 export function MissionDetailSheet() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [showMenuSheet, setShowMenuSheet] = useState(false);
+
   const editingOrderId = useDetailStore((state) => state.editingOrderId);
   const editingOrder = useDetailStore((state) => state.editingOrder);
   const closeDetailSheet = useDetailStore((state) => state.closeDetailSheet);
@@ -59,8 +62,6 @@ export function MissionDetailSheet() {
     []
   );
 
-  const [showMenu, setShowMenu] = useState(false);
-
   const handleDelete = () => {
     if (editingOrder) {
       editingOrder.deleted = true;
@@ -69,7 +70,7 @@ export function MissionDetailSheet() {
     }
   };
 
-  function handleCheckboxChange(checked: boolean) {
+  function handleCheckboxChange() {
     if (editingOrder) {
       editingOrder.itemType =
         editingOrder?.itemType === MissionType.NOT_DONE
@@ -86,18 +87,20 @@ export function MissionDetailSheet() {
     }
   }
 
+  const handleMenuPress = useCallback(() => {
+    setShowMenuSheet(true);
+  }, []);
+
   const renderHandle = useCallback(
     (props: any) => (
       <MissionDetailHandle
         {...props}
         bottomSheetModalRef={bottomSheetModalRef}
-        showMenu={showMenu}
-        setShowMenu={setShowMenu}
-        handleDelete={handleDelete}
+        onMenuPress={handleMenuPress}
         insets={insets}
       />
     ),
-    [showMenu, handleDelete, insets]
+    [insets, handleMenuPress]
   );
 
   const mission = editingOrderId ? missionMap.get(editingOrderId) : null;
@@ -119,55 +122,61 @@ export function MissionDetailSheet() {
   };
 
   return (
-    <BottomSheetModal
-      ref={bottomSheetModalRef}
-      index={0}
-      snapPoints={snapPoints}
-      onChange={handleSheetChanges}
-      enablePanDownToClose={true}
-      backdropComponent={renderBackdrop}
-      handleComponent={renderHandle}
-      enableDynamicSizing={false}
-    >
-      <BottomSheetView style={styles.contentContainer}>
-        {mission ? (
-          <View>
-            <View style={styles.topRow}>
-              <View style={{ padding: 8 }}>
-                <Checkbox
-                  size={22}
-                  checked={
-                    !!(
-                      editingOrderId &&
-                      orderMap.get(editingOrderId)?.itemType ===
-                        MissionType.DONE
-                    )
-                  }
-                  onChange={handleCheckboxChange}
+    <>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        handleComponent={renderHandle}
+        enableDynamicSizing={false}
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          {mission ? (
+            <View>
+              <View style={styles.topRow}>
+                <View style={{ padding: 8 }}>
+                  <Checkbox
+                    size={22}
+                    checked={
+                      !!(
+                        editingOrderId &&
+                        orderMap.get(editingOrderId)?.itemType ===
+                          MissionType.DONE
+                      )
+                    }
+                    onChange={handleCheckboxChange}
+                  />
+                </View>
+
+                <PrioritySelect
+                  priority={mission.missionPriorityId}
+                  onChange={handlePriorityChange}
                 />
               </View>
-
-              <PrioritySelect
-                priority={mission.missionPriorityId}
-                onChange={handlePriorityChange}
+              <TextInput
+                ref={titleInputRef}
+                style={styles.title}
+                placeholder="准备做什么？"
+                placeholderTextColor="#D9D9D9"
+                onFocus={onInputFocus}
+                value={mission.missionTitle}
+                onChangeText={onChangeTitle}
               />
+              <Text style={styles.content}>{mission.missionContent}</Text>
             </View>
-            <TextInput
-              ref={titleInputRef}
-              style={styles.title}
-              placeholder="准备做什么？"
-              placeholderTextColor="#D9D9D9"
-              onFocus={onInputFocus}
-              value={mission.missionTitle}
-              onChangeText={onChangeTitle}
-            />
-            <Text style={styles.content}>{mission.missionContent}</Text>
-          </View>
-        ) : (
-          <Text>Loading...</Text>
-        )}
-      </BottomSheetView>
-    </BottomSheetModal>
+          ) : (
+            <Text>Loading...</Text>
+          )}
+        </BottomSheetView>
+      </BottomSheetModal>
+      <MenuActionSheet
+        visible={showMenuSheet}
+        onClose={() => setShowMenuSheet(false)}
+      />
+    </>
   );
 }
 
